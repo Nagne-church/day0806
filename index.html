@@ -173,7 +173,7 @@
     </div>
 
     <!-- Q&A Modal -->
-    <div id="qa-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50">
+    <div id="qa-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 hidden z-50 opacity-0">
         <div class="modal-content bg-white w-full max-w-2xl rounded-xl shadow-2xl flex flex-col max-h-[90vh] transform scale-95">
             <header class="flex items-center justify-between p-4 border-b">
                 <h3 id="modal-title" class="text-xl font-bold text-gray-800">질문하기</h3>
@@ -230,20 +230,25 @@
                 `;
                 qaModal.classList.remove('hidden');
                 document.body.style.overflow = 'hidden';
+                
+                // Use a short timeout to allow the browser to render the modal before starting the transition
                 setTimeout(() => {
-                    qaModal.querySelector('.modal-overlay').classList.remove('opacity-0');
+                    qaModal.classList.remove('opacity-0');
                     qaModal.querySelector('.modal-content').classList.remove('scale-95');
                 }, 10);
+
                 questionInput.focus();
             };
 
             const closeModal = () => {
-                qaModal.querySelector('.modal-overlay').classList.add('opacity-0');
+                qaModal.classList.add('opacity-0');
                 qaModal.querySelector('.modal-content').classList.add('scale-95');
+
+                // Wait for the transition to finish before hiding the modal
                 setTimeout(() => {
                     qaModal.classList.add('hidden');
                     document.body.style.overflow = 'auto';
-                }, 300);
+                }, 300); // This duration should match the CSS transition duration
             };
 
             askQuestionBtns.forEach(btn => {
@@ -252,7 +257,8 @@
 
             closeModalBtn.addEventListener('click', closeModal);
             qaModal.addEventListener('click', (e) => {
-                if (e.target.classList.contains('modal-overlay')) {
+                // Check if the click is on the overlay itself, not on its children
+                if (e.target === qaModal) {
                     closeModal();
                 }
             });
